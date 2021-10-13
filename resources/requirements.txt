@@ -1,0 +1,5 @@
+selenium==3.141.0
+pytest==6.2.5
+webdriver-manager==3.5.0
+termcolor==1.1.0
+jproperties==2.1.1
