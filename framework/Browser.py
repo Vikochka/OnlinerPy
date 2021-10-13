@@ -25,7 +25,9 @@ class Browser:
         return self.driver.implicitly_wait(20)
 
     def get(self):
-        return self.driver.get(self.base_url)
+        self.driver.get(self.base_url)
+        self.wait_page_loaded()
+        return self.driver
 
     def quit(self):
         return self.driver.quit()
@@ -98,3 +100,10 @@ class Browser:
                 double_check = True
 
         self.driver.execute_script('window.scrollTo(document.body.scrollHeight, 0);')
+
+    def find_element(self, locator, time=10):
+        return element = self.driver.find_element(locator)
+
+    def find_elements(self, locator, time=10):
+        return WebDriverWait(self.driver, time).until(EC.presence_of_all_elements_located(locator),
+                                                      message=f"Can't find elements by locator {locator}")
