@@ -5,18 +5,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 from framework.driver_factory import WebDriverFactory
-from selenium import webdriver
 
 
 class Browser:
-    driver = webdriver
+    driver = WebDriverFactory().getWebDriverInstance("chrome")
 
     def __init__(self):
-        self.driver = self.driver
         self.base_url = "https://www.onliner.by/"
 
     def instance(self):
-        self.driver = WebDriverFactory().getWebDriverInstance("chrome")
+        return self.driver
 
     def maximize_window(self):
         return self.driver.maximize_window()
@@ -101,9 +99,3 @@ class Browser:
 
         self.driver.execute_script('window.scrollTo(document.body.scrollHeight, 0);')
 
-    def find_element(self, locator, time=10):
-        return element = self.driver.find_element(locator)
-
-    def find_elements(self, locator, time=10):
-        return WebDriverWait(self.driver, time).until(EC.presence_of_all_elements_located(locator),
-                                                      message=f"Can't find elements by locator {locator}")
