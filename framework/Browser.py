@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 from framework.driver_factory import WebDriverFactory
+from loguru import logger
 
 
 class Browser:
@@ -23,12 +24,17 @@ class Browser:
         return self.driver.implicitly_wait(20)
 
     def get(self):
-        self.driver.get(self.base_url)
-        self.wait_page_loaded()
-        return self.driver
+        try:
+            self.driver.get(self.base_url)
+            logger.info(f"Browser has opened: {self.base_url}")
+            self.wait_page_loaded()
+            return self.driver
+        except:
+            logger.error(f"Browser could not open: {self.base_url}")
 
     def quit(self):
-        return self.driver.quit()
+        self.driver.quit()
+        logger.info(f"Browser was closed")
 
     def wait_page_loaded(self, timeout=10, check_js_complete=True,
                          check_page_changes=False,
@@ -83,14 +89,6 @@ class Browser:
 
                 page_loaded = not bad_element
 
-            if page_loaded and wait_for_element:
-                try:
-                    page_loaded = WebDriverWait(self.driver, 0.1).until(
-                        EC.element_to_be_clickable(wait_for_element._locator)
-                    )
-                except:
-                    pass
-
             assert k < timeout, 'The page loaded more than {0} seconds!'.format(timeout)
 
             if page_loaded and not double_check:
@@ -98,4 +96,3 @@ class Browser:
                 double_check = True
 
         self.driver.execute_script('window.scrollTo(document.body.scrollHeight, 0);')
-

@@ -1,8 +1,8 @@
 from selenium.webdriver.common.by import By
 
 from framework.BasePage import BasePage
-from framework.elements.BaseElememt import BaseElement
 from framework.elements.Label import Label
+from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
 
 
 class CatalogLocators:
@@ -17,22 +17,27 @@ class CatalogLocators:
     catalog_label = (By.XPATH, "//h1[@class='catalog-navigation__title'][contains(text(),'Каталог')]")
 
 
-class CatalogPage(BasePage):
-    def __init__(self, title_locator, title):
-        super().__init__(title_locator, title)
+class CatalogPage(BasePageOnliner):
 
-    def page_load(self):
+    def __init__(self,):
+        super().__init__(CatalogLocators.catalog_label, "Catalog page")
+
+    @staticmethod
+    def page_load():
         load = Label(CatalogLocators.catalog_label)
         load.is_displayed()
 
-    def navigate_menu(self):
+    @staticmethod
+    def navigate_menu():
         navigate_cat_menu = Label(CatalogLocators.navigate_menu)
         navigate_cat_menu.click()
 
-    def navigate_section(self):
+    @staticmethod
+    def navigate_section():
         navigate_sec = Label(CatalogLocators.navigate_section)
         navigate_sec.click()
 
-    def navigate_section_list(self):
+    @staticmethod
+    def navigate_section_list():
         navigate_section_list = Label(CatalogLocators.catalog_navigation_list)
         navigate_section_list.click()

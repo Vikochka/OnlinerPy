@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from framework.BasePage import BasePage
 from framework.elements.CheckBox import CheckBox
 from framework.elements.TextBox import TextBox
+from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
 
 
 class TVPageLocators:
@@ -24,7 +25,8 @@ class TVPageLocators:
 
     price_check = (By.XPATH, "//div[@class='schema-product__group']//div[contains(@class,"
                              "'schema-product__price')]//span[contains(@data-bind,'format.minPrice')]")
-    block = (By.XPATH, "//div[@id='schema-products']//div[contains(@class,'schema-product__part schema-product__part_2')]")
+    block = (
+        By.XPATH, "//div[@id='schema-products']//div[contains(@class,'schema-product__part schema-product__part_2')]")
 
     title_check = (By.XPATH, "//div[@id='schema-products']//div[contains(@class,'schema-product__title')]")
 
@@ -32,12 +34,13 @@ class TVPageLocators:
 
     description = (By.XPATH, "//div[@class='schema-product__description']")
 
+    pageLocator = (By.XPATH, "//h1[contains(@class,'schema-header__title')][contains(text(),'Телевизоры')]")
 
-class TVPage(BasePage):
 
-    def __init__(self, title_locator, title):
+class TVPage(BasePageOnliner):
 
-        super().__init__(title_locator, title)
+    def __init__(self):
+        super().__init__(TVPageLocators.pageLocator, "ТV page")
 
     @staticmethod
     def select_manufacturer():
@@ -91,7 +94,7 @@ class TVPage(BasePage):
 
     @staticmethod
     def check_diagonal():
-        scheme_products = TextBox(TVPageLocators.shema_products).get_elements()
+        scheme_products = TextBox(TVPageLocators.scheme_products).get_elements()
         print(len(scheme_products))
         description = TextBox(TVPageLocators.description).get_elements()
 
@@ -105,7 +108,7 @@ class TVPage(BasePage):
 
     @staticmethod
     def check_resolution(res):
-        scheme_products = TextBox(TVPageLocators.shema_products).get_text()
+        scheme_products = TextBox(TVPageLocators.scheme_products).get_text()
         print(len(scheme_products))
         description = TextBox(TVPageLocators.description).get_text()
 

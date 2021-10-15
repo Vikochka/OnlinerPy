@@ -1,11 +1,11 @@
-from onliner.pageObject.MainPage import MainPage
-from onliner.pageObject.catalog_page import CatalogPage
-from onliner.pageObject.tv_page import TVPage
+from onliner.pageObject.pages.MainPage import MainPage
+from onliner.pageObject.pages.catalog_page import CatalogPage
+from onliner.pageObject.pages.tv_page import TVPage
 
 
 def test_onliner(browser):
     main = MainPage()
-    main.navigate_main_header()
+    main.main_menu.navigate_main_header()
 
     catalog = CatalogPage()
     catalog.page_load()

@@ -3,6 +3,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from framework.Browser import Browser
+from loguru import logger
 
 
 class BaseElement:
@@ -30,25 +31,39 @@ class BaseElement:
         return self.find_element(locator=self.element)
 
     def click(self):
-        self.find_element(locator=self.element)
-        self.element.click()
+        try:
+            self.find_element(locator=self.element)
+            self.element.click()
+            logger.info(f"Clicking on an element was successful")
+        except:
+            logger.error(f"Clicking on an element was not successful")
 
     def action_click(self):
-        self.find_element(locator=self.element)
-        actions = ActionChains(Browser().driver)
-        actions.click(self.element)
-        actions.perform()
+        try:
+            self.find_element(locator=self.element)
+            actions = ActionChains(Browser().driver)
+            actions.click(self.element)
+            actions.perform()
+            logger.info(f"Clicking on an element was successful")
+        except:
+            logger.error(f"Clicking on an element was not successful")
 
     def is_displayed(self):
         self.find_element(locator=self.element)
         self.element.is_displayed()
 
     def send_keys(self, text):
-        self.find_element(locator=self.element)
-        self.element.send_keys(text)
+        try:
+            self.find_element(locator=self.element)
+            self.element.send_keys(text)
+            logger.info(f"{text} was enter successful")
+        except:
+            logger.info(f"{text} was not enter successful")
 
     def get_text(self):
-        self.find_element(locator=self.element)
-        return self.element.text()
-
-
+        try:
+            self.find_element(locator=self.element)
+            text = self.element.text
+            logger.info(f"Text of element" + text)
+        except:
+            logger.error("Text error")
