@@ -5,10 +5,12 @@ from selenium.webdriver.support import expected_conditions as EC
 from framework.Browser import Browser
 from loguru import logger
 
+from framework.property_reader import PropertyReader
+
 
 class BaseElement:
     element = WebElement
-
+    time_out_for_element= PropertyReader().get_property( 'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'timeout_for_element')
     def __init__(self, element):
         self.element = element
 

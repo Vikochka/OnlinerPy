@@ -1,8 +1,10 @@
+import pytest
+
 from onliner.pageObject.pages.MainPage import MainPage
 from onliner.pageObject.pages.catalog_page import CatalogPage
 from onliner.pageObject.pages.tv_page import TVPage
 
-
+@pytest.mark.parametrize('input',[])
 def test_onliner(browser):
     main = MainPage()
     main.main_menu.navigate_main_header()
@@ -20,4 +22,3 @@ def test_onliner(browser):
     tv_page.select_price(1000)
     # tv_page.check_manufacturer("Samsung")
     # tv_page.check_price(1000)
-

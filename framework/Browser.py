@@ -7,12 +7,15 @@ from selenium.webdriver.support.wait import WebDriverWait
 from framework.driver_factory import WebDriverFactory
 from loguru import logger
 
+from framework.property_reader import PropertyReader
+
 
 class Browser:
-    driver = WebDriverFactory().getWebDriverInstance("chrome")
+    driver = WebDriverFactory().getWebDriverInstance()
 
     def __init__(self):
-        self.base_url = "https://www.onliner.by/"
+        self.base_url = PropertyReader().get_property(
+            'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'base_url')
 
     def instance(self):
         return self.driver
@@ -21,7 +24,8 @@ class Browser:
         return self.driver.maximize_window()
 
     def implicitly_wait(self):
-        return self.driver.implicitly_wait(20)
+        return self.driver.implicitly_wait(PropertyReader().get_property(
+            'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'timeout_for_driver'))
 
     def get(self):
         try:

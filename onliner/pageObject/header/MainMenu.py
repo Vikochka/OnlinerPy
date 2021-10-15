@@ -3,7 +3,7 @@ from framework.elements.Label import Label
 
 
 class Locators:
-    navigate_header = (By.XPATH, "//span[@class='b-main-navigation__text'][text()='Каталог']")
+    navigate_header = (By.XPATH, "//span[@class='b-main-navigation__text'][text()='%s']" % ('Каталог'))
 
 
 class MainMenu:
