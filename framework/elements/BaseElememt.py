@@ -1,71 +1,190 @@
+import time
+from termcolor import colored
+
 from selenium.webdriver import ActionChains
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from framework.Browser import Browser
 from loguru import logger
+from framework.Browser import Browser
 
-from framework.property_reader import PropertyReader
 
+class BaseElement(object):
+    _locator = ('', '')
+    _web_driver = Browser.driver
+    _page = None
+    _timeout = 10
+    _wait_after_click = False
 
-class BaseElement:
-    element = WebElement
-    time_out_for_element= PropertyReader().get_property( 'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'timeout_for_element')
-    def __init__(self, element):
-        self.element = element
+    def __init__(self, timeout=10, wait_after_click=False, **kwargs):
+        self._timeout = timeout
+        self._wait_after_click = wait_after_click
+        for attr in kwargs:
+            self._locator = (str(attr).replace('_', ' '), str(kwargs.get(attr)))
 
-    def find_element(self, locator, time=10):
-        self.element = WebDriverWait(Browser().driver, time).until(EC.presence_of_element_located(locator),
-                                                                   message=f"Can't find element by locator {locator}")
-        return self.element
-
-    def find_elements(self, locator, time=10):
-        self.element = WebDriverWait(Browser().driver, time).until(EC.presence_of_all_elements_located(locator),
-                                                                   message=f"Can't find elements by locator {locator}")
-        return self.element
-
-    def get_elements(self):
-        # self.find_elements(locator=self.element)
-        return self.find_elements(locator=self.element)
-
-    def get_element(self):
-        # self.find_elements(locator=self.element)
-        return self.find_element(locator=self.element)
-
-    def click(self):
+    def find(self, timeout=10):
+        element = None
         try:
-            self.find_element(locator=self.element)
-            self.element.click()
-            logger.info(f"Clicking on an element was successful")
+            element = WebDriverWait(self._web_driver, timeout).until(
+                EC.presence_of_element_located(self._locator)
+            )
+            logger.info(colored('Element found on the page!', 'green'))
+            return element
         except:
-            logger.error(f"Clicking on an element was not successful")
+            logger.error(colored('Element not found on the page!', 'red'))
 
-    def action_click(self):
+    def wait_to_be_clickable(self, timeout=10, check_visibility=True):
+        element = None
         try:
-            self.find_element(locator=self.element)
-            actions = ActionChains(Browser().driver)
-            actions.click(self.element)
-            actions.perform()
-            logger.info(f"Clicking on an element was successful")
+            element = WebDriverWait(self._web_driver, timeout).until(
+                EC.element_to_be_clickable(self._locator)
+            )
+            logger.info(colored('Element is clickable', 'green'))
         except:
-            logger.error(f"Clicking on an element was not successful")
+            logger.error('Element is not clickable!', 'red')
+        if check_visibility:
+            self.wait_until_not_visible()
 
-    def is_displayed(self):
-        self.find_element(locator=self.element)
-        self.element.is_displayed()
+        return element
 
-    def send_keys(self, text):
+    def is_clickable(self):
+        element = self.wait_to_be_clickable()
+        logger.info(colored('Element is clickable', 'green'))
+        return element is not None
+
+    def is_presented(self):
+        element = self.find()
+        return element is not None
+
+    def is_visible(self):
+        element = self.find()
+        if element:
+            return element.is_displayed()
+        return False
+
+    def wait_until_not_visible(self, timeout=10):
+        element = None
         try:
-            self.find_element(locator=self.element)
-            self.element.send_keys(text)
-            logger.info(f"{text} was enter successful")
+            element = WebDriverWait(self._web_driver, timeout).until(
+                EC.visibility_of_element_located(self._locator)
+            )
+
         except:
-            logger.info(f"{text} was not enter successful")
+            logger.error(colored('Element not visible!', 'red'))
+
+        if element:
+            js = ('return (!(arguments[0].offsetParent === null) && '
+                  '!(window.getComputedStyle(arguments[0]) === "none") &&'
+                  'arguments[0].offsetWidth > 0 && arguments[0].offsetHeight > 0'
+                  ');')
+            visibility = self._web_driver.execute_script(js, element)
+            iteration = 0
+            while not visibility and iteration < 10:
+                time.sleep(0.5)
+                iteration += 1
+                visibility = self._web_driver.execute_script(js, element)
+                logger.info('Element {0} visibility: {1}'.format(self._locator, visibility))
+        return element
+
+    def send_keys(self, keys):
+        element = self.find()
+        if element:
+            element.send_keys(keys)
+        else:
+            msg = 'Element with locator {0} not found'
+            raise AttributeError(msg.format(self._locator))
 
     def get_text(self):
+        element = self.find()
+        text = ''
         try:
-            self.find_element(locator=self.element)
-            text = self.element.text
-            logger.info(f"Text of element" + text)
+            text = str(element.text)
+        except Exception as e:
+            logger.error(colored('Error: {0}'.format(e), 'red'))
+        return text
+
+    def get_attribute(self, attr_name):
+        element = self.find()
+        if element:
+            return element.get_attribute(attr_name)
+
+    def click(self, hold_seconds=0, x_offset=1, y_offset=1):
+        element = self.wait_to_be_clickable()
+        if element:
+            action = ActionChains(self._web_driver)
+            action.move_to_element_with_offset(element, x_offset, y_offset). \
+                pause(hold_seconds).click().perform()
+        else:
+            msg = 'Element with locator {0} not found'
+            raise AttributeError(msg.format(self._locator))
+        if self._wait_after_click:
+            self._page.wait_page_loaded()
+
+    def action_click(self, hold_seconds=0, x_offset=1, y_offset=1):
+        element = self.wait_to_be_clickable()
+        if element:
+            action = ActionChains(self._web_driver)
+            action.move_to_element(element).click().perform()
+        else:
+            msg = 'Element with locator {0} not found'
+            raise AttributeError(msg.format(self._locator))
+        if self._wait_after_click:
+            self._page.wait_page_loaded()
+
+    def is_selected(self):
+        element = self.wait_to_be_clickable()
+        if element:
+            action = ActionChains(self._web_driver)
+            action.click().perform()
+            element.is_selected()
+            logger.info(colored('Element id selected', 'green'))
+        else:
+            msg = 'Element is not selected'
+            logger.error(colored(msg, 'red'))
+
+        if self._wait_after_click:
+            self._page.wait_page_loaded()
+
+    def split(self, param):
+        pass
+
+    def __getitem__(self, item):
+        elements = self.finds()
+        return elements[item]
+
+    def finds(self, timeout=10):
+        elements = []
+        try:
+            elements = WebDriverWait(self._web_driver, timeout).until(
+                EC.presence_of_all_elements_located(self._locator)
+            )
         except:
-            logger.error("Text error")
+            logger.error(colored('Elements not found on the page!', 'red'))
+        return elements
+
+    def count(self):
+        elements = self.finds()
+        return len(elements)
+
+    def get_text_s(self):
+        elements = self.finds()
+        result = []
+        for element in elements:
+            text = ''
+            try:
+                text = str(element.text)
+            except Exception as e:
+                logger.error(colored('Error: {0}'.format(e), 'red'))
+            result.append(text)
+        return result
+
+    def highlight_and_make_screenshot(self, file_name):
+        element = self.find()
+        self._web_driver.execute_script("arguments[0].scrollIntoView();", element)
+        self._web_driver.execute_script("arguments[0].style.border='3px solid red'", element)
+        self._web_driver.save_screenshot(file_name + '.png')
+
+    def highlight_and_make_screenshot_of_elements(self, file_name):
+        element = self.finds()
+        self._web_driver.execute_script("arguments[0].scrollIntoView();", element)
+        self._web_driver.execute_script("arguments[0].style.border='3px solid red'", element)
+        self._web_driver.save_screenshot(file_name + '.png')

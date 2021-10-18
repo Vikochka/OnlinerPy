@@ -1,43 +1,37 @@
-from selenium.webdriver.common.by import By
-
-from framework.BasePage import BasePage
 from framework.elements.Label import Label
 from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
+from termcolor import colored
+from loguru import logger
 
 
 class CatalogLocators:
-    navigate_menu = (
-        By.XPATH, "//span[@class='catalog-navigation-classifier__item-title-wrapper'][text()='Электроника']")
-    navigate_section = (
-        By.XPATH, "//div[@class='catalog-navigation-list__aside-title'][contains(text(),'Телевидение')]")
+    navigate_menu = "//span[@class='catalog-navigation-classifier__item-title-wrapper'][text()='%s']"
+    navigate_section = "//div[@class='catalog-navigation-list__aside-title'][contains(text(),'%s')]"
 
-    catalog_navigation_list = (By.XPATH, "//span[@class='catalog-navigation-list__dropdown-data']"
-                                         "//span[@class='catalog-navigation-list__dropdown-title']"
-                                         "[contains(text(),'Телевизоры')]")
-    catalog_label = (By.XPATH, "//h1[@class='catalog-navigation__title'][contains(text(),'Каталог')]")
+    catalog_navigation_list = "//span[@class='catalog-navigation-list__dropdown-data']//span[" \
+                              "@class='catalog-navigation-list__dropdown-title'][contains(text(),'%s')] "
+    catalog_label = "//h1[@class='catalog-navigation__title'][contains(text(),'%s')]"
 
 
 class CatalogPage(BasePageOnliner):
 
-    def __init__(self,):
-        super().__init__(CatalogLocators.catalog_label, "Catalog page")
+    def __init__(self, label):
+        super().__init__(CatalogLocators.catalog_label % label, "Catalog page")
 
     @staticmethod
-    def page_load():
-        load = Label(CatalogLocators.catalog_label)
-        load.is_displayed()
+    def navigate_menu(navigate_menu):
+        navigate_cat_menu = Label(xpath=CatalogLocators.navigate_menu % navigate_menu)
+        navigate_cat_menu.action_click()
+        logger.info(colored('Navigate menu header is successful', 'green'))
 
     @staticmethod
-    def navigate_menu():
-        navigate_cat_menu = Label(CatalogLocators.navigate_menu)
-        navigate_cat_menu.click()
+    def navigate_section(navigate_section):
+        navigate_sec = Label(xpath=CatalogLocators.navigate_section % navigate_section)
+        navigate_sec.action_click()
+        logger.info(colored('Navigate section header is successful', 'green'))
 
     @staticmethod
-    def navigate_section():
-        navigate_sec = Label(CatalogLocators.navigate_section)
-        navigate_sec.click()
-
-    @staticmethod
-    def navigate_section_list():
-        navigate_section_list = Label(CatalogLocators.catalog_navigation_list)
-        navigate_section_list.click()
+    def navigate_section_list(catalog_navigation_list):
+        navigate_section_list = Label(xpath=CatalogLocators.catalog_navigation_list % catalog_navigation_list)
+        navigate_section_list.action_click()
+        logger.info(colored('Navigate section header click is successful', 'green'))

@@ -1,121 +1,120 @@
-from selenium.webdriver.common.by import By
-
-from framework.BasePage import BasePage
 from framework.elements.CheckBox import CheckBox
 from framework.elements.TextBox import TextBox
 from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
+from loguru import logger
+from termcolor import colored
 
 
 class TVPageLocators:
-    manufacturer = (By.XPATH, "//label[@class='schema-filter__checkbox-item']"
-                              "//span[text()='Samsung']/../span[@class='i-checkbox']")
+    manufacturer = "//label[@class='schema-filter__checkbox-item']//span[text()='%s']/../span[@class='i-checkbox']"
 
-    diagonal_from = (By.XPATH, "//div[contains(@class,'schema-filter__label')]/..//div"
-                               "[@class='schema-filter-control schema-filter-control_select']//"
-                               "select[contains(@data-bind,'value: facet.value.from')]")
-    diagonal_to = (By.XPATH, "//div[contains(@class,'schema-filter__label')]/..//div"
-                             "[@class='schema-filter-control schema-filter-control_select']//select"
-                             "[contains(@data-bind,'value: facet.value.to')]")
+    diagonal_from = "//div[contains(@class,'schema-filter__label')]/..//div[@class='schema-filter-control " \
+                    "schema-filter-control_select']//select[contains(@data-bind,'value: facet.value.from')] "
+    diagonal_to = "//div[contains(@class,'schema-filter__label')]/..//div[@class='schema-filter-control " \
+                  "schema-filter-control_select']//select[contains(@data-bind,'value: facet.value.to')] "
 
-    price_to = (By.XPATH, "//div[contains(@class,'schema-filter__label')]/..//div"
-                          "[@class='schema-filter__facet']//input[contains(@placeholder,'до')]")
-    resolution = (By.XPATH, "//ul[@class='schema-filter__list']//label"
-                            "[contains(@class,'schema-filter__checkbox-item')]//"
-                            "span[contains(@class,'schema-filter__checkbox-text')][text()='1920x1080 (Full HD)'] ")
+    price_to = "//div[contains(@class,'schema-filter__label')]/..//div[@class='schema-filter__facet']//input[" \
+               "contains(@placeholder,'до')] "
+    resolution = "//span[contains(@class,'schema-filter__checkbox-text')][text()='%s']/../span[" \
+                 "@class='i-checkbox'] "
 
-    price_check = (By.XPATH, "//div[@class='schema-product__group']//div[contains(@class,"
-                             "'schema-product__price')]//span[contains(@data-bind,'format.minPrice')]")
-    block = (
-        By.XPATH, "//div[@id='schema-products']//div[contains(@class,'schema-product__part schema-product__part_2')]")
+    price_check = "//div[@class='schema-product__group']//div[contains(@class,'schema-product__price')]//span[" \
+                  "contains(@data-bind,'format.minPrice')] "
+    block = "//div[@id='schema-products']//div[contains(@class,'schema-product__part schema-product__part_2')]"
 
-    title_check = (By.XPATH, "//div[@id='schema-products']//div[contains(@class,'schema-product__title')]")
+    title_check = "//div[@id='schema-products']//div[contains(@class,'schema-product__title')]"
 
-    scheme_products = (By.XPATH, "//div[@class='schema-product']")
+    scheme_products = "//div[@class='schema-product']"
 
-    description = (By.XPATH, "//div[@class='schema-product__description']")
+    description = "//div[@class='schema-product__description']"
 
-    pageLocator = (By.XPATH, "//h1[contains(@class,'schema-header__title')][contains(text(),'Телевизоры')]")
+    pageLocator = "//h1[contains(@class,'schema-header__title')][contains(text(),'%s')]"
 
 
 class TVPage(BasePageOnliner):
 
-    def __init__(self):
-        super().__init__(TVPageLocators.pageLocator, "ТV page")
+    def __init__(self,label):
+        super().__init__(TVPageLocators.pageLocator % label, "ТV page")
 
     @staticmethod
-    def select_manufacturer():
-        man = CheckBox(TVPageLocators.manufacturer)
-        man.click()
+    def select_manufacturer(select_manufacturer):
+        man = CheckBox(xpath=TVPageLocators.manufacturer % select_manufacturer)
+        man.action_click()
+        logger.info(colored('Manufacturer was selected successful', 'green'))
 
     @staticmethod
     def select_diagonal(d_from, d_to):
-        diag_from = TextBox(TVPageLocators.diagonal_from)
-        diag_to = TextBox(TVPageLocators.diagonal_to)
+        diag_from = TextBox(xpath=TVPageLocators.diagonal_from)
+        diag_to = TextBox(xpath=TVPageLocators.diagonal_to)
         diag_from.send_keys(d_from)
         diag_to.send_keys(d_to)
+        logger.info(colored('Diagonal was selected successful', 'green'))
 
     @staticmethod
     def select_price(price):
-        price_to = TextBox(TVPageLocators.price_to)
+        price_to = TextBox(xpath=TVPageLocators.price_to)
         price_to.send_keys(price)
+        logger.info(colored('Price was selected successful', 'green'))
 
     @staticmethod
-    def select_resolution():
-        res = CheckBox(TVPageLocators.resolution)
+    def select_resolution(select_resolution):
+        res = CheckBox(xpath=TVPageLocators.resolution % select_resolution )
         res.action_click()
+        logger.info(colored('Resolution was selected successful', 'green'))
 
     @staticmethod
     def check_price(price):
-        block = TextBox(TVPageLocators.block).get_elements()
-        for i in range(0, len(block), 1):
-            price_arr = TextBox(TVPageLocators.price_check).get_text().split(",")
-            price_int = int(price_arr[0])
-            print(price_int)
-            if price_int <= price:
+        block = TextBox(xpath=TVPageLocators.block)
+        for i in range(0, block.count(), +1):
+            price_arr = TextBox(xpath=TVPageLocators.price_check).get_text().split(" ")
+            price_check = price_arr[0].replace(',', '.')
+            price_check.highlight_and_make_screenshot_of_elements("check_price")
+            if float(price_check) <= price:
+                logger.info(colored('Price is correct: ' + price_check, 'green'))
                 return True
             else:
+                logger.info(colored('Price is not correct: ' + price_check, 'red'))
                 return False
 
     @staticmethod
     def check_manufacturer(man):
-        block = TextBox(TVPageLocators.block).get_elements()
-        print(len(block))
-        title_check = TextBox(TVPageLocators.title_check).get_elements()
-        print(title_check)
-        for i in range(0, len(block), 1):
-            title = title_check[i].get_text()
-            print(title)
-        #     title_split = title.split()
-        #     manufacturer_get = title_split[1]
-        #     if manufacturer_get == man:
-        #         return True
-        #     else:
-        #         return False
+        block = TextBox(xpath=TVPageLocators.block)
+        title_check = TextBox(xpath=TVPageLocators.title_check)
+        for i in range(0, block.count(), +1):
+            title = title_check.get_text()
+            title_split = title.split()
+            manufacturer_get = title_split[1]
+            if manufacturer_get == man:
+                logger.info(colored('Manufacturer is correct: ' + manufacturer_get, 'green'))
+                return True
+            else:
+                logger.error(colored("Manufacturer is not correct: " + manufacturer_get, 'red'))
+                return False
 
     @staticmethod
     def check_diagonal():
-        scheme_products = TextBox(TVPageLocators.scheme_products).get_elements()
-        print(len(scheme_products))
-        description = TextBox(TVPageLocators.description).get_elements()
-
-        for i in range(0, len(scheme_products), +1):
-            description_item = description[i].get_text()
-            print(description_item)
-            des_split = description_item.split(" ")
-            description_arr = list[des_split]
-            print(description_arr)
-            assert 40 <= int(des_split[0]) <= 50
+        scheme_products = TextBox(xpath=TVPageLocators.scheme_products)
+        description = TextBox(xpath=TVPageLocators.description)
+        for i in range(0, scheme_products.count(), +1):
+            description_item = description.get_text()
+            des_split = description_item.split('"')
+            if 40 <= int(des_split[0]) <= 50:
+                logger.info(colored('Diagonal is correct: ' + des_split[0], 'green'))
+                return True
+            else:
+                logger.info(colored('Diagonal is not correct: ' + des_split[0], 'red'))
+                return False
 
     @staticmethod
     def check_resolution(res):
-        scheme_products = TextBox(TVPageLocators.scheme_products).get_text()
-        print(len(scheme_products))
-        description = TextBox(TVPageLocators.description).get_text()
-
-        for i in range(0, len(scheme_products), +1):
-            description_item = description[i].get_text()
-            print(description_item)
-            des_split = description_item.split(" ")
-            description_arr = list[des_split]
-            print(description_arr)
-            assert des_split[i] == res
+        scheme_products = TextBox(xpath=TVPageLocators.scheme_products)
+        description = TextBox(xpath=TVPageLocators.description)
+        for i in range(0, scheme_products.count(), +1):
+            description_item = description.get_text().split('"')
+            resolution = description_item[1].split(",")
+            if resolution[1] == res:
+                logger.info(colored('Resolution is correct' + resolution[1], 'green'))
+                return True
+            else:
+                logger.error(colored('Resolution is not correct' + resolution[1], 'red'))
+                return False
