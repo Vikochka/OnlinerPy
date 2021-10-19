@@ -10,6 +10,7 @@ from loguru import logger
 from framework.property_reader import PropertyReader
 from termcolor import colored
 
+
 class Browser:
     driver = WebDriverFactory().getWebDriverInstance()
 
@@ -38,7 +39,7 @@ class Browser:
 
     def quit(self):
         self.driver.quit()
-        logger.info(colored(f"Browser was closed",'red'))
+        logger.info(colored(f"Browser was closed", 'green'))
 
     def wait_page_loaded(self, timeout=10, check_js_complete=True,
                          check_page_changes=False,

@@ -1,7 +1,5 @@
 from selenium import webdriver
 from loguru import logger
-import json
-
 from framework.property_reader import PropertyReader
 from termcolor import colored
 

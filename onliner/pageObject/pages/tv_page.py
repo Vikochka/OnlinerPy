@@ -33,7 +33,7 @@ class TVPageLocators:
 
 class TVPage(BasePageOnliner):
 
-    def __init__(self,label):
+    def __init__(self, label):
         super().__init__(TVPageLocators.pageLocator % label, "ТV page")
 
     @staticmethod
@@ -58,19 +58,20 @@ class TVPage(BasePageOnliner):
 
     @staticmethod
     def select_resolution(select_resolution):
-        res = CheckBox(xpath=TVPageLocators.resolution % select_resolution )
+        res = CheckBox(xpath=TVPageLocators.resolution % select_resolution)
         res.action_click()
+        res.is_selected()
         logger.info(colored('Resolution was selected successful', 'green'))
 
     @staticmethod
-    def check_price(price):
+    def check_price(price_to):
         block = TextBox(xpath=TVPageLocators.block)
+        price = TextBox(xpath=TVPageLocators.price_check)
         for i in range(0, block.count(), +1):
-            price_arr = TextBox(xpath=TVPageLocators.price_check).get_text().split(" ")
+            price_arr = price.get_text().split(" ")
             price_check = price_arr[0].replace(',', '.')
-            price_check.highlight_and_make_screenshot_of_elements("check_price")
-            if float(price_check) <= price:
-                logger.info(colored('Price is correct: ' + price_check, 'green'))
+            if float(price_check) <= price_to:
+                logger.info(colored('Price is correct', 'green'))
                 return True
             else:
                 logger.info(colored('Price is not correct: ' + price_check, 'red'))
@@ -78,31 +79,32 @@ class TVPage(BasePageOnliner):
 
     @staticmethod
     def check_manufacturer(man):
-        block = TextBox(xpath=TVPageLocators.block)
+        block = TextBox(xpath=TVPageLocators.block).count()
+        print(block)
         title_check = TextBox(xpath=TVPageLocators.title_check)
-        for i in range(0, block.count(), +1):
+        for i in range(0, block, ++1):
             title = title_check.get_text()
             title_split = title.split()
             manufacturer_get = title_split[1]
             if manufacturer_get == man:
-                logger.info(colored('Manufacturer is correct: ' + manufacturer_get, 'green'))
+                logger.info(colored('Manufacturer is correct', 'green'))
                 return True
             else:
                 logger.error(colored("Manufacturer is not correct: " + manufacturer_get, 'red'))
                 return False
 
     @staticmethod
-    def check_diagonal():
-        scheme_products = TextBox(xpath=TVPageLocators.scheme_products)
+    def check_diagonal(d_from, d_to):
+        scheme_products = TextBox(xpath=TVPageLocators.scheme_products).count()
         description = TextBox(xpath=TVPageLocators.description)
-        for i in range(0, scheme_products.count(), +1):
+        for i in range(0, scheme_products, +1):
             description_item = description.get_text()
             des_split = description_item.split('"')
-            if 40 <= int(des_split[0]) <= 50:
-                logger.info(colored('Diagonal is correct: ' + des_split[0], 'green'))
+            if d_from <= int(des_split[0]) <= d_to:
+                logger.info(colored('Diagonal is correct', 'green'))
                 return True
             else:
-                logger.info(colored('Diagonal is not correct: ' + des_split[0], 'red'))
+                logger.error(colored('Diagonal is not correct: ' + des_split[0], 'red'))
                 return False
 
     @staticmethod
@@ -110,11 +112,11 @@ class TVPage(BasePageOnliner):
         scheme_products = TextBox(xpath=TVPageLocators.scheme_products)
         description = TextBox(xpath=TVPageLocators.description)
         for i in range(0, scheme_products.count(), +1):
-            description_item = description.get_text().split('"')
+            description_item = description.get_text().split('" ')
             resolution = description_item[1].split(",")
-            if resolution[1] == res:
-                logger.info(colored('Resolution is correct' + resolution[1], 'green'))
+            if resolution[0] == res:
+                logger.info(colored('Resolution is correct', 'green'))
                 return True
             else:
-                logger.error(colored('Resolution is not correct' + resolution[1], 'red'))
+                logger.error(colored('Resolution is not correct: ' + resolution[0], 'red'))
                 return False

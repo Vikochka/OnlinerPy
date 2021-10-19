@@ -13,13 +13,17 @@ class BaseElement(object):
     _web_driver = Browser.driver
     _page = None
     _timeout = 10
-    _wait_after_click = False
+    _wait_after_click = 3
 
     def __init__(self, timeout=10, wait_after_click=False, **kwargs):
         self._timeout = timeout
         self._wait_after_click = wait_after_click
         for attr in kwargs:
             self._locator = (str(attr).replace('_', ' '), str(kwargs.get(attr)))
+
+    def __getitem__(self, item):
+        elements = self.finds()
+        return elements[item]
 
     def find(self, timeout=10):
         element = None
@@ -31,6 +35,32 @@ class BaseElement(object):
             return element
         except:
             logger.error(colored('Element not found on the page!', 'red'))
+
+    def finds(self, timeout=10):
+        elements = []
+        try:
+            elements = WebDriverWait(self._web_driver, timeout).until(
+                EC.presence_of_all_elements_located(self._locator)
+            )
+        except:
+            logger.error(colored('Elements not found on the page!', 'red'))
+        return elements
+
+    def count(self):
+        elements = self.finds()
+        return len(elements)
+
+    def get_text_s(self):
+        elements = self.finds()
+        result = []
+        for element in elements:
+            text = ''
+            try:
+                text = str(element.text)
+            except Exception as e:
+                logger.error(colored('Error: {0}'.format(e), 'red'))
+            result.append(text)
+        return result
 
     def wait_to_be_clickable(self, timeout=10, check_visibility=True):
         element = None
@@ -109,17 +139,20 @@ class BaseElement(object):
 
     def click(self, hold_seconds=0, x_offset=1, y_offset=1):
         element = self.wait_to_be_clickable()
+
         if element:
             action = ActionChains(self._web_driver)
             action.move_to_element_with_offset(element, x_offset, y_offset). \
-                pause(hold_seconds).click().perform()
+                pause(hold_seconds).click(on_element=element).perform()
+            self._page.wait_page_loaded()
         else:
             msg = 'Element with locator {0} not found'
             raise AttributeError(msg.format(self._locator))
+
         if self._wait_after_click:
             self._page.wait_page_loaded()
 
-    def action_click(self, hold_seconds=0, x_offset=1, y_offset=1):
+    def action_click(self):
         element = self.wait_to_be_clickable()
         if element:
             action = ActionChains(self._web_driver)
@@ -147,44 +180,8 @@ class BaseElement(object):
     def split(self, param):
         pass
 
-    def __getitem__(self, item):
-        elements = self.finds()
-        return elements[item]
-
-    def finds(self, timeout=10):
-        elements = []
-        try:
-            elements = WebDriverWait(self._web_driver, timeout).until(
-                EC.presence_of_all_elements_located(self._locator)
-            )
-        except:
-            logger.error(colored('Elements not found on the page!', 'red'))
-        return elements
-
-    def count(self):
-        elements = self.finds()
-        return len(elements)
-
-    def get_text_s(self):
-        elements = self.finds()
-        result = []
-        for element in elements:
-            text = ''
-            try:
-                text = str(element.text)
-            except Exception as e:
-                logger.error(colored('Error: {0}'.format(e), 'red'))
-            result.append(text)
-        return result
-
     def highlight_and_make_screenshot(self, file_name):
         element = self.find()
-        self._web_driver.execute_script("arguments[0].scrollIntoView();", element)
-        self._web_driver.execute_script("arguments[0].style.border='3px solid red'", element)
-        self._web_driver.save_screenshot(file_name + '.png')
-
-    def highlight_and_make_screenshot_of_elements(self, file_name):
-        element = self.finds()
         self._web_driver.execute_script("arguments[0].scrollIntoView();", element)
         self._web_driver.execute_script("arguments[0].style.border='3px solid red'", element)
         self._web_driver.save_screenshot(file_name + '.png')
