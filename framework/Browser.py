@@ -16,7 +16,7 @@ class Browser:
 
     def __init__(self):
         self.base_url = PropertyReader().get_property(
-            'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'base_url')
+            '..//config.properties', 'base_url')
 
     def instance(self):
         return self.driver
@@ -26,7 +26,7 @@ class Browser:
 
     def implicitly_wait(self):
         return self.driver.implicitly_wait(PropertyReader().get_property(
-            'C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties', 'timeout_for_driver'))
+            '..//config.properties', 'timeout_for_driver'))
 
     def get(self):
         try:

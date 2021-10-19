@@ -1,10 +1,14 @@
+import os
+
 from jproperties import Properties
 
 
 class PropertyReader:
-    @staticmethod
-    def get_property(path, key):
+    dir = os.path.dirname(__file__)
+
+    def get_property(self, path, key):
+        filename = os.path.join(self.dir, path)
         configs = Properties()
-        with open(path, 'rb') as read_prop:
+        with open(filename, 'rb') as read_prop:
             configs.load(read_prop)
         return configs[key].data

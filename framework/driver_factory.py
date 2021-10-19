@@ -1,3 +1,5 @@
+import os
+
 from selenium import webdriver
 from loguru import logger
 from framework.property_reader import PropertyReader
@@ -9,7 +11,7 @@ class WebDriverFactory:
     prop = PropertyReader()
 
     def getWebDriverInstance(self):
-        prop_browser = self.prop.get_property('C://Users//V.Yermakovich//PycharmProjects//Onliner//config.properties',
+        prop_browser = self.prop.get_property('../config.properties',
                                               'browser')
         if prop_browser == "firefox":
             self.driver = webdriver.Firefox(executable_path="C://Install//geckodriver-v0.29.1-win64//gekodriver.exe")
