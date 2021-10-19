@@ -21,8 +21,8 @@ def test_onliner(browser, catalog, electronics, television, tv, manufacturer, pr
     tv_page = TVPage(tv)
     tv_page.select_manufacturer(manufacturer)
     tv_page.select_price(price)
-    tv_page.select_resolution(resolution)
     tv_page.select_diagonal(diagonal_from, diagonal_to)
+    tv_page.select_resolution(resolution)
 
     tv_page.check_manufacturer(manufacturer)
     tv_page.check_price(price)
