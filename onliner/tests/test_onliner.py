@@ -5,26 +5,26 @@ from onliner.pageObject.pages.catalog_page import CatalogPage
 from onliner.pageObject.pages.tv_page import TVPage
 
 
-@pytest.mark.parametrize("catalog,electronics,television,tv,manufacturer,price,resolution,diagonal_from,diagonal_to",
-                         [('Каталог', 'Электроника', 'Телевидение', 'Телевизоры', 'Samsung', 1000,
+@pytest.mark.parametrize("tv,manufacturer,price,resolution,diagonal_from,diagonal_to",
+                         [('Телевизоры', 'Samsung', 1000,
                            '1920x1080 (Full HD)', 40, 50)])
-def test_onliner(browser, catalog, electronics, television, tv, manufacturer, price, resolution, diagonal_from,
+def test_onliner(browser, tv, manufacturer, price, resolution, diagonal_from,
                  diagonal_to):
     main = MainPage()
-    main.main_menu.navigate_main_header(catalog)
+    main.main_menu.navigate_main_header('Каталог')
 
-    catalog = CatalogPage(catalog)
-    catalog.navigate_menu(electronics)
-    catalog.navigate_section(television)
-    catalog.navigate_section_list(tv)
+    catalog = CatalogPage('Каталог')
+    catalog.navigate_menu('Электроника')
+    catalog.navigate_section('Телевидение')
+    catalog.navigate_section_list('Телевизоры')
 
-    tv_page = TVPage(tv)
+    tv_page = TVPage('Телевизоры')
     tv_page.select_manufacturer(manufacturer)
     tv_page.select_price(price)
     tv_page.select_diagonal(diagonal_from, diagonal_to)
     tv_page.select_resolution(resolution)
 
     tv_page.check_manufacturer(manufacturer)
+    tv_page.check_resolution(resolution)
     tv_page.check_price(price)
     tv_page.check_diagonal(diagonal_from, diagonal_to)
-    tv_page.check_resolution(resolution)

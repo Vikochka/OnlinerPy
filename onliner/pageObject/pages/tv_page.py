@@ -82,7 +82,7 @@ class TVPage(BasePageOnliner):
         block = TextBox(xpath=TVPageLocators.block).count()
         print(block)
         title_check = TextBox(xpath=TVPageLocators.title_check)
-        for i in range(0, block, ++1):
+        for i in range(0, block, +1):
             title = title_check.get_text()
             title_split = title.split()
             manufacturer_get = title_split[1]

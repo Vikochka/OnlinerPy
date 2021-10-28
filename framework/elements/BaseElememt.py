@@ -146,7 +146,7 @@ class BaseElement(object):
                 pause(hold_seconds).click(on_element=element).perform()
             self._page.wait_page_loaded()
         else:
-            msg = 'Element with locator {0} not found'
+            msg = 'Element not found'
             raise AttributeError(msg.format(self._locator))
 
         if self._wait_after_click:
@@ -158,7 +158,7 @@ class BaseElement(object):
             action = ActionChains(self._web_driver)
             action.move_to_element(element).click().perform()
         else:
-            msg = 'Element with locator {0} not found'
+            msg = 'Element not found'
             raise AttributeError(msg.format(self._locator))
         if self._wait_after_click:
             self._page.wait_page_loaded()
