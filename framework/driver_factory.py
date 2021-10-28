@@ -3,6 +3,8 @@ from loguru import logger
 from framework.property_reader import PropertyReader
 from termcolor import colored
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+
 
 class WebDriverFactory:
     driver = None
@@ -12,7 +14,7 @@ class WebDriverFactory:
         prop_browser = self.prop.get_property('../config.properties',
                                               'browser')
         if prop_browser == "firefox":
-            self.driver = webdriver.Firefox(executable_path="C://Drivers//geckodriver-v0.29.1-win64//gekodriver.exe")
+            self.driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
             logger.info(colored(f"{prop_browser} browser was opened", 'green'))
         if prop_browser == "chrome":
             self.driver = webdriver.Chrome(ChromeDriverManager().install())
