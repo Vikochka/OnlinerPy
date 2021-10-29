@@ -11,7 +11,7 @@ pipeline {
         stage('Scan') {
             steps {
               withSonarQubeEnv(installationName: 'sonarqube')
-                sh 'python test_onliner.py sonarqube:sonar'
+                sh '${scannerHome}/bin/sonar-scanner'
             }
         }
     }
