@@ -11,5 +11,6 @@ pipeline {
                 sh '${scannerHome}/bin/sonar-scanner:scanner'
             }
         }
+      }
     }
 }
