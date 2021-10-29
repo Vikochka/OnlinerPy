@@ -4,10 +4,10 @@ from telnetlib import EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
-from framework.driver_factory import WebDriverFactory
+from framework.DriverFactory import WebDriverFactory
 from loguru import logger
 
-from framework.property_reader import PropertyReader
+from framework.PropertyReader import PropertyReader
 from termcolor import colored
 
 

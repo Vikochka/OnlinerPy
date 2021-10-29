@@ -1,6 +1,6 @@
 from selenium import webdriver
 from loguru import logger
-from framework.property_reader import PropertyReader
+from framework.PropertyReader import PropertyReader
 from termcolor import colored
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager

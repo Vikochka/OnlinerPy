@@ -3,3 +3,4 @@ pytest==6.2.5
 webdriver-manager==3.5.0
 termcolor==1.1.0
 jproperties==2.1.1
+sonar.python.version=3.8

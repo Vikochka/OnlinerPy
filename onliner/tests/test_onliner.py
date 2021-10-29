@@ -1,8 +1,8 @@
 import pytest
 
 from onliner.pageObject.pages.MainPage import MainPage
-from onliner.pageObject.pages.catalog_page import CatalogPage
-from onliner.pageObject.pages.tv_page import TVPage
+from onliner.pageObject.pages.СatalogPage import CatalogPage
+from onliner.pageObject.pages.TvPage import TVPage
 
 
 @pytest.mark.parametrize("tv,manufacturer,price,resolution,diagonal_from,diagonal_to",
