@@ -8,4 +8,11 @@ node {
       bat "${scannerHome}/bin/sonar-scanner"
     }
   }
+  stage('Build') {
+        steps {
+           git 'https://github.com/Vikochka/OnlinerPy.git'
+           // To run Maven on a Windows agent, use
+           bat "python test_onliner.py"
+        }
+
 }
