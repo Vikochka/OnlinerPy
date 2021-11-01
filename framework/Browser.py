@@ -1,4 +1,3 @@
-import time
 from telnetlib import EC
 
 from selenium.webdriver.common.by import By
@@ -13,6 +12,8 @@ from termcolor import colored
 
 class Browser:
     driver = WebDriverFactory().getWebDriverInstance()
+    timeout = PropertyReader().get_property(
+        '..//config.properties', 'timeout_for_driver')
 
     def __init__(self):
         self.base_url = PropertyReader().get_property(
@@ -25,8 +26,7 @@ class Browser:
         return self.driver.maximize_window()
 
     def implicitly_wait(self):
-        return self.driver.implicitly_wait(PropertyReader().get_property(
-            '..//config.properties', 'timeout_for_driver'))
+        return self.driver.implicitly_wait(self.timeout)
 
     def get(self):
         try:
@@ -41,22 +41,19 @@ class Browser:
         self.driver.quit()
         logger.info(colored(f"Browser was closed", 'green'))
 
-    def wait_page_loaded(self, timeout=10, check_js_complete=True,
+    def wait_page_loaded(self, check_js_complete=True,
                          check_page_changes=False,
-                         wait_for_xpath_to_disappear='',
-                         sleep_time=2):
+                         wait_for_xpath_to_disappear=''):
         page_loaded = False
         double_check = False
         k = 0
-        if sleep_time:
-            time.sleep(sleep_time)
         source = ''
         try:
             source = self.driver.page_source
         except:
             pass
         while not page_loaded:
-            time.sleep(0.5)
+            self.implicitly_wait()
             k += 1
             if check_js_complete:
                 try:
@@ -75,13 +72,13 @@ class Browser:
             if page_loaded and wait_for_xpath_to_disappear:
                 bad_element = None
                 try:
-                    bad_element = WebDriverWait(self.driver, 0.1).until(
+                    bad_element = WebDriverWait(self.driver, self.timeout).until(
                         EC.presence_of_element_located((By.XPATH, wait_for_xpath_to_disappear))
                     )
                 except:
                     pass
                 page_loaded = not bad_element
-            assert k < timeout, 'The page loaded more than {0} seconds!'.format(timeout)
+            assert k < self.timeout, 'The page loaded more than {0} seconds!'.format(self.timeout)
             if page_loaded and not double_check:
                 page_loaded = False
                 double_check = True

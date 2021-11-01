@@ -1,4 +1,4 @@
-import time
+
 from termcolor import colored
 
 from selenium.webdriver import ActionChains
@@ -6,14 +6,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from loguru import logger
 from framework.Browser import Browser
+from framework.PropertyReader import PropertyReader
 
 
 class BaseElement(object):
     _locator = ('', '')
     _web_driver = Browser.driver
     _page = None
-    _timeout = 10
-    _wait_after_click = 3
+    _timeout = PropertyReader().get_property(
+        '..//config.properties', 'timeout_for_driver')
+    _wait_after_click = PropertyReader().get_property(
+        '..//config.properties', 'wait_after_click')
 
     def __init__(self, timeout=10, wait_after_click=False, **kwargs):
         self._timeout = timeout
@@ -28,7 +31,7 @@ class BaseElement(object):
     def find(self, timeout=10):
         element = None
         try:
-            element = WebDriverWait(self._web_driver, timeout).until(
+            element = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.presence_of_element_located(self._locator)
             )
             logger.info(colored('Element found on the page!', 'green'))
@@ -39,7 +42,7 @@ class BaseElement(object):
     def finds(self, timeout=10):
         elements = []
         try:
-            elements = WebDriverWait(self._web_driver, timeout).until(
+            elements = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.presence_of_all_elements_located(self._locator)
             )
         except:
@@ -65,7 +68,7 @@ class BaseElement(object):
     def wait_to_be_clickable(self, timeout=10, check_visibility=True):
         element = None
         try:
-            element = WebDriverWait(self._web_driver, timeout).until(
+            element = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.element_to_be_clickable(self._locator)
             )
             logger.info(colored('Element is clickable', 'green'))
@@ -94,7 +97,7 @@ class BaseElement(object):
     def wait_until_not_visible(self, timeout=10):
         element = None
         try:
-            element = WebDriverWait(self._web_driver, timeout).until(
+            element = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.visibility_of_element_located(self._locator)
             )
 
@@ -108,8 +111,7 @@ class BaseElement(object):
                   ');')
             visibility = self._web_driver.execute_script(js, element)
             iteration = 0
-            while not visibility and iteration < 10:
-                time.sleep(0.5)
+            while not visibility and iteration < self._timeout:
                 iteration += 1
                 visibility = self._web_driver.execute_script(js, element)
                 logger.info('Element {0} visibility: {1}'.format(self._locator, visibility))
