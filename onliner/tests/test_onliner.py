@@ -3,6 +3,10 @@ import pytest
 from onliner.pageObject.pages.MainPage import MainPage
 from onliner.pageObject.pages.СatalogPage import CatalogPage
 from onliner.pageObject.pages.TvPage import TVPage
+from loguru import logger
+
+
+logger.add("console.log", format="{time} {level} {message}")
 
 
 @pytest.mark.parametrize("tv,manufacturer,price,resolution,diagonal_from,diagonal_to",

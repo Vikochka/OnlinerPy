@@ -11,6 +11,6 @@ node {
   stage('Build') {
            git 'https://github.com/Vikochka/OnlinerPy.git'
            // To run Maven on a Windows agent, use
-           bat "python -m pytest -v"
+           bat "python -m pytest -v "
   }
 }

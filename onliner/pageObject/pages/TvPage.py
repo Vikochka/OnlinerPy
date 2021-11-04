@@ -74,7 +74,7 @@ class TVPage(BasePageOnliner):
                 logger.info(colored('Price is correct', 'green'))
                 return True
             else:
-                logger.info(colored('Price is not correct: ' + price_check, 'red'))
+                logger.error(colored('Price is not correct: ' + price_check, 'red'))
                 return False
 
     @staticmethod
