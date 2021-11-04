@@ -2,7 +2,6 @@ from framework.elements.CheckBox import CheckBox
 from framework.elements.TextBox import TextBox
 from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
 from loguru import logger
-from termcolor import colored
 
 
 class TVPageLocators:
@@ -40,7 +39,7 @@ class TVPage(BasePageOnliner):
     def select_manufacturer(select_manufacturer):
         man = CheckBox(xpath=TVPageLocators.manufacturer % select_manufacturer)
         man.action_click()
-        logger.info(colored('Manufacturer was selected successful', 'green'))
+        logger.info('Manufacturer was selected successful')
 
     @staticmethod
     def select_diagonal(d_from, d_to):
@@ -48,20 +47,20 @@ class TVPage(BasePageOnliner):
         diag_to = TextBox(xpath=TVPageLocators.diagonal_to)
         diag_from.send_keys(d_from)
         diag_to.send_keys(d_to)
-        logger.info(colored('Diagonal was selected successful', 'green'))
+        logger.info('Diagonal was selected successful', 'green')
 
     @staticmethod
     def select_price(price):
         price_to = TextBox(xpath=TVPageLocators.price_to)
         price_to.send_keys(price)
-        logger.info(colored('Price was selected successful', 'green'))
+        logger.info('Price was selected successful', 'green')
 
     @staticmethod
     def select_resolution(select_resolution):
         res = CheckBox(xpath=TVPageLocators.resolution % select_resolution)
         res.action_click()
         res.is_selected()
-        logger.info(colored('Resolution was selected successful', 'green'))
+        logger.info('Resolution was selected successful', 'green')
 
     @staticmethod
     def check_price(price_to):
@@ -71,10 +70,10 @@ class TVPage(BasePageOnliner):
             price_arr = price.get_text().split(" ")
             price_check = price_arr[0].replace(',', '.')
             if float(price_check) <= price_to:
-                logger.info(colored('Price is correct', 'green'))
+                logger.info('Price is correct', 'green')
                 return True
             else:
-                logger.error(colored('Price is not correct: ' + price_check, 'red'))
+                logger.error('Price is not correct: ' + price_check)
                 return False
 
     @staticmethod
@@ -87,10 +86,10 @@ class TVPage(BasePageOnliner):
             title_split = title.split()
             manufacturer_get = title_split[1]
             if manufacturer_get == man:
-                logger.info(colored('Manufacturer is correct', 'green'))
+                logger.info('Manufacturer is correct')
                 return True
             else:
-                logger.error(colored("Manufacturer is not correct: " + manufacturer_get, 'red'))
+                logger.error("Manufacturer is not correct: " + manufacturer_get)
                 return False
 
     @staticmethod
@@ -101,10 +100,10 @@ class TVPage(BasePageOnliner):
             description_item = description.get_text()
             des_split = description_item.split('"')
             if d_from <= int(des_split[0]) <= d_to:
-                logger.info(colored('Diagonal is correct', 'green'))
+                logger.info('Diagonal is correct')
                 return True
             else:
-                logger.error(colored('Diagonal is not correct: ' + des_split[0], 'red'))
+                logger.error('Diagonal is not correct: ' + des_split[0])
                 return False
 
     @staticmethod
@@ -115,8 +114,8 @@ class TVPage(BasePageOnliner):
             description_item = description.get_text().split('" ')
             resolution = description_item[1].split(",")
             if resolution[0] == res:
-                logger.info(colored('Resolution is correct', 'green'))
+                logger.info('Resolution is correct')
                 return True
             else:
-                logger.error(colored('Resolution is not correct: ' + resolution[0], 'red'))
+                logger.error('Resolution is not correct: ' + resolution[0])
                 return False

@@ -1,6 +1,5 @@
 from framework.elements.Label import Label
 from onliner.pageObject.pages.BasePageOnliner import BasePageOnliner
-from termcolor import colored
 from loguru import logger
 
 
@@ -22,16 +21,16 @@ class CatalogPage(BasePageOnliner):
     def navigate_menu(navigate_menu):
         navigate_cat_menu = Label(xpath=CatalogLocators.navigate_menu % navigate_menu)
         navigate_cat_menu.action_click()
-        logger.info(colored('Navigate menu header is successful', 'green'))
+        logger.info('Navigate menu header is successful')
 
     @staticmethod
     def navigate_section(navigate_section):
         navigate_sec = Label(xpath=CatalogLocators.navigate_section % navigate_section)
         navigate_sec.action_click()
-        logger.info(colored('Navigate section header is successful', 'green'))
+        logger.info('Navigate section header is successful')
 
     @staticmethod
     def navigate_section_list(catalog_navigation_list):
         navigate_section_list = Label(xpath=CatalogLocators.catalog_navigation_list % catalog_navigation_list)
         navigate_section_list.action_click()
-        logger.info(colored('Navigate section header click is successful', 'green'))
+        logger.info('Navigate section header click is successful')

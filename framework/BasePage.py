@@ -1,6 +1,5 @@
 from framework.elements.Label import Label
 from loguru import logger
-from termcolor import colored
 
 
 class BasePage:
@@ -12,6 +11,6 @@ class BasePage:
         label = Label(xpath=title_locator)
         try:
             label.is_visible()
-            logger.info(colored(f"{title} opens", 'green'))
+            logger.info(f"{title} opens")
         except:
-            logger.error(colored(f"{title} does not open", 'red'))
+            logger.error(f"{title} does not open")

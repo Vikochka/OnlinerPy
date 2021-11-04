@@ -7,7 +7,6 @@ from framework.DriverFactory import WebDriverFactory
 from loguru import logger
 
 from framework.PropertyReader import PropertyReader
-from termcolor import colored
 
 
 class Browser:
@@ -31,15 +30,15 @@ class Browser:
     def get(self):
         try:
             self.driver.get(self.base_url)
-            logger.info(colored(f"Browser has opened: {self.base_url}", 'green'))
+            logger.info(f"Browser has opened: {self.base_url}")
             self.wait_page_loaded()
             return self.driver
         except:
-            logger.error(colored(f"Browser could not open: {self.base_url}", 'red'))
+            logger.error(f"Browser could not open: {self.base_url}")
 
     def quit(self):
         self.driver.quit()
-        logger.info(colored(f"Browser was closed", 'green'))
+        logger.info(f"Browser was closed")
 
     def wait_page_loaded(self, check_js_complete=True,
                          check_page_changes=False,

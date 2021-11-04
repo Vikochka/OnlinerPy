@@ -1,6 +1,3 @@
-
-from termcolor import colored
-
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -34,10 +31,10 @@ class BaseElement(object):
             element = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.presence_of_element_located(self._locator)
             )
-            logger.info(colored('Element found on the page!', 'green'))
+            logger.info('Element found on the page!')
             return element
         except:
-            logger.error(colored('Element not found on the page!', 'red'))
+            logger.error('Element not found on the page!')
 
     def finds(self, timeout=10):
         elements = []
@@ -46,7 +43,7 @@ class BaseElement(object):
                 EC.presence_of_all_elements_located(self._locator)
             )
         except:
-            logger.error(colored('Elements not found on the page!', 'red'))
+            logger.error('Elements not found on the page!')
         return elements
 
     def count(self):
@@ -61,7 +58,7 @@ class BaseElement(object):
             try:
                 text = str(element.text)
             except Exception as e:
-                logger.error(colored('Error: {0}'.format(e), 'red'))
+                logger.error('Error: {0}'.format(e))
             result.append(text)
         return result
 
@@ -71,9 +68,9 @@ class BaseElement(object):
             element = WebDriverWait(self._web_driver, self._timeout).until(
                 EC.element_to_be_clickable(self._locator)
             )
-            logger.info(colored('Element is clickable', 'green'))
+            logger.info('Element is clickable')
         except:
-            logger.error('Element is not clickable!', 'red')
+            logger.error('Element is not clickable!')
         if check_visibility:
             self.wait_until_not_visible()
 
@@ -81,7 +78,7 @@ class BaseElement(object):
 
     def is_clickable(self):
         element = self.wait_to_be_clickable()
-        logger.info(colored('Element is clickable', 'green'))
+        logger.info('Element is clickable')
         return element is not None
 
     def is_presented(self):
@@ -102,7 +99,7 @@ class BaseElement(object):
             )
 
         except:
-            logger.error(colored('Element not visible!', 'red'))
+            logger.error('Element not visible!', 'red')
 
         if element:
             js = ('return (!(arguments[0].offsetParent === null) && '
@@ -131,7 +128,7 @@ class BaseElement(object):
         try:
             text = str(element.text)
         except Exception as e:
-            logger.error(colored('Error: {0}'.format(e), 'red'))
+            logger.error('Error: {0}'.format(e), 'red')
         return text
 
     def get_attribute(self, attr_name):
@@ -171,10 +168,10 @@ class BaseElement(object):
             action = ActionChains(self._web_driver)
             action.click().perform()
             element.is_selected()
-            logger.info(colored('Element id selected', 'green'))
+            logger.info('Element id selected')
         else:
             msg = 'Element is not selected'
-            logger.error(colored(msg, 'red'))
+            logger.error(msg)
 
         if self._wait_after_click:
             self._page.wait_page_loaded()
